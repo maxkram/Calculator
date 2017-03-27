@@ -12,9 +12,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText newNumber;
     private TextView displayOperation;
 
-    private Double operand1 = null;
 
+    private Double operand1 = null;
     private String pendingOperation = "=";
+
+    private static final String STATE_PENDING_OPERATION = "PendingOperation";
+    private static final String STATE_OPERAND1 = "Operand1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
         Button button8 = (Button) findViewById(R.id.button8);
         Button button9 = (Button) findViewById(R.id.button9);
         Button buttonDot = (Button) findViewById(R.id.buttonDot);
+
         Button buttonEquals = (Button) findViewById(R.id.buttonEquals);
         Button buttonDivide = (Button) findViewById(R.id.buttonDivide);
         Button buttonMultiply = (Button) findViewById(R.id.buttonMultiply);
         Button buttonMinus = (Button) findViewById(R.id.buttonMinus);
         Button buttonPlus = (Button) findViewById(R.id.buttonPlus);
-
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(listener);
         button8.setOnClickListener(listener);
         button9.setOnClickListener(listener);
+        buttonDot.setOnClickListener(listener);
 
         View.OnClickListener opListener = new View.OnClickListener() {
             @Override
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 displayOperation.setText(pendingOperation);
             }
         };
+
         buttonEquals.setOnClickListener(opListener);
         buttonDivide.setOnClickListener(opListener);
         buttonMultiply.setOnClickListener(opListener);
@@ -83,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
         buttonPlus.setOnClickListener(opListener);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_PENDING_OPERATION, pendingOperation);
+        if(operand1 != null){
+            outState.putDouble(STATE_OPERAND1, operand1);
+        }
+        super.onSaveInstanceState(outState);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION);
+        operand1 = savedInstanceState.getDouble(STATE_OPERAND1);
+        displayOperation.setText(pendingOperation);
+    }
     private void performOperation(Double value, String operation) {
         if (null == operand1) {
             operand1 = value;
